@@ -172,6 +172,9 @@ function applyEffect(
 	if (effect.kind === "repair") {
 		bot.hp.current = Math.min(bot.hp.max, bot.hp.current + effect.amount);
 	}
+	if (effect.kind === "damage") {
+		bot.hp.current = Math.max(0, bot.hp.current - effect.amount);
+	}
 }
 
 /** Applies each player's action: play a non-bot card, discard it, apply its effect. */

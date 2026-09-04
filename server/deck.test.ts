@@ -11,6 +11,14 @@ describe("createDefaultDeck", () => {
 		expect(deck.filter((c) => c.type === "action")).toHaveLength(15);
 	});
 
+	it("includes at least one Robot Duck bot and one Light Repair action", () => {
+		const { starter, deck } = createDefaultDeck();
+		const names = [starter, ...deck].map((c) => c.name);
+		expect(names.some((n) => n.startsWith("Robot Duck"))).toBe(true);
+		expect(names.some((n) => n.startsWith("Light Repair"))).toBe(true);
+		expect(names.some((n) => n.startsWith("Zap"))).toBe(true);
+	});
+
 	it("returns unique card names across starter and deck", () => {
 		const { starter, deck } = createDefaultDeck();
 		const names = [starter, ...deck].map((c) => c.name);
