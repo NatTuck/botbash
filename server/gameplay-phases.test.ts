@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cardByName } from "../shared/cards";
 import type { Game, GameCard, GamePhase, GamePlayer } from "../shared/types";
-import { resolveCombat, submitAndAdvance } from "./gameplay";
+import { resolveAction, resolveCombat, submitAndAdvance } from "./gameplay";
 
 function cards(count: number): GameCard[] {
 	return Array.from({ length: count }, (_, i) =>
@@ -18,6 +18,10 @@ function duck(hp = 6, atk = 2): GameCard {
 
 function repair(): GameCard {
 	return structuredClone(cardByName("Light Repair 1"));
+}
+
+function duckAndRoll(): GameCard {
+	return structuredClone(cardByName("Duck and Roll 1"));
 }
 
 function boardPlayer(
@@ -176,6 +180,76 @@ describe("action phase", () => {
 		submitAndAdvance(game, "Bob", { kind: "pass" });
 
 		expect(target.hp.current).toBe(4);
+	});
+
+	it("stuns one enemy while all other bots attack normally", () => {
+		const protectedBot = duck();
+		const allyAttacker = duck();
+		const activeEnemy = duck();
+		const stunnedEnemy = duck();
+
+		const alice = boardPlayer(
+			"Alice",
+			[protectedBot, null, allyAttacker],
+			[duckAndRoll()],
+		);
+		const bob = boardPlayer(
+			"Bob",
+			[activeEnemy, null, stunnedEnemy],
+			[],
+		);
+		const game = makeGame([alice, bob], "action");
+
+		game.submissions = {
+			Alice: {
+				kind: "action",
+				handIndex: 0,
+				board: "Bob",
+				slot: 2,
+			},
+			Bob: { kind: "pass" },
+		};
+
+		resolveAction(game, []);
+
+		expect(stunnedEnemy.status).toContainEqual({
+			kind: "temporary",
+			name: "stunned",
+			turnsRemaining: 1,
+		});
+		expect(game.scrapPile[0].name).toBe("Duck and Roll 1");
+
+		resolveCombat(game);
+
+		expect(protectedBot.hp.current).toBe(6);
+		expect(stunnedEnemy.hp.current).toBe(4);
+		expect(allyAttacker.hp.current).toBe(4);
+		expect(activeEnemy.hp.current).toBe(4);
+		expect(stunnedEnemy.status).not.toContainEqual(
+			expect.objectContaining({ name: "stunned" }),
+		);
+	});
+
+	it("rejects using Duck and Roll on your own bot", () => {
+		const alice = boardPlayer(
+			"Alice",
+			[duck(), null, null],
+			[duckAndRoll()],
+		);
+		const bob = boardPlayer("Bob", [null, duck(), null], []);
+		const game = makeGame([alice, bob], "action");
+
+		expect(
+			submitAndAdvance(game, "Alice", {
+				kind: "action",
+				handIndex: 0,
+				board: "Alice",
+				slot: 0,
+			}),
+		).toEqual({
+			ok: false,
+			error: "must target an enemy bot",
+		});
 	});
 });
 
