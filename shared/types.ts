@@ -1,6 +1,8 @@
 export type CardType = "bot" | "action";
 
-export type CardEffect = { kind: "repair"; amount: number };
+export type CardEffect =
+	| { kind: "damage"; amount: number }
+	| { kind: "repair"; amount: number };
 
 export type CardStatus =
 	| { kind: "temporary"; name: string; turnsRemaining: number }
@@ -25,20 +27,20 @@ export type GameCard = Card;
  */
 export type GameEvent =
 	| {
-			kind: "deploy";
-			player: string;
-			handIndex: number;
-			card: GameCard;
-			slot: number;
-	  }
+		kind: "deploy";
+		player: string;
+		handIndex: number;
+		card: GameCard;
+		slot: number;
+	}
 	| {
-			kind: "action";
-			player: string;
-			handIndex: number;
-			card: GameCard;
-			board: string;
-			slot: number;
-	  };
+		kind: "action";
+		player: string;
+		handIndex: number;
+		card: GameCard;
+		board: string;
+		slot: number;
+	};
 
 /** A player's persistent identity and deck (lobby-side). */
 export interface Player {
