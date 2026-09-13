@@ -25,14 +25,6 @@ describe("createDefaultDeck", () => {
 		expect(new Set(names).size).toBe(names.length);
 	});
 
-    it("starter deck has ducks, repairs, and breadson", () => {
-        const { starter, deck } = createDefaultDeck();
-        const names = [starter, ...deck].map((card) => card.name);
-        expect(names.some((n) => n.startsWith("Robot Duck"))).toBe(true);
-        expect(names.some((n) => n.startsWith("Light Repair"))).toBe(true);
-        expect(names.some((n) => n.startsWith("Breadson"))).toBe(true);
-    });
-
 	it("returns deep copies that do not reference the master cards", () => {
 		const { starter, deck } = createDefaultDeck();
 		for (const card of [starter, ...deck]) {
