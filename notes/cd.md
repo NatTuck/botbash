@@ -1,39 +1,29 @@
-# CI/CD setup
+# Deployment (CD)
 
-This document describes how to set up continuous integration (CI) and
-continuous deployment (CD) for Bot Bash using GitHub Actions, `rsync`, and a
-systemd `--user` service.
-
-The repository is <https://github.com/NatTuck/botbash> and the production host
-is `botbash@ettin.homework.quest`. nginx terminates TLS for
+Bot Bash is deployed to `botbash@ettin.homework.quest` with GitHub Actions,
+`rsync`, and a systemd `--user` service. nginx terminates TLS for
 `botbash.homework.quest` and reverse-proxies to the app on `localhost:3100`
-(see `notes/botbash.conf`).
+(see [`notes/botbash.conf`](./botbash.conf)).
 
-## How it works
+The CD workflow runs on every push/merge to `main` and can also be triggered by
+hand. It builds the app in CI, syncs the result to the host, and restarts the
+service.
+
+CI is documented separately in [`notes/ci.md`](./ci.md).
 
 ```
-                 pull request / push
-                         |
-                         v
-              +----------------------+
-              |  GitHub Actions CI   |
-              |  lint, unit, build,  |
-              |  Playwright e2e      |
-              +----------+-----------+
-                         | merge / push to main
-                         v
-              +----------------------+
-              |  GitHub Actions CD   |
-              |  build -> rsync ->   |
-              |  restart systemd     |
-              +----------+-----------+
-                         |
-                         v
-   nginx :443  --->  botbash.service (systemd --user) :3100
+push / merge to main
+          |
+          v
+  +--------------------------+
+  |  GitHub Actions CD       |
+  |  build -> rsync ->       |
+  |  restart systemd         |
+  +--------------------------+
+          |
+          v
+  nginx :443 --> botbash.service (systemd --user) :3100
 ```
-
-- **CI** runs on every pull request and on every push to `main`.
-- **CD** runs on every push/merge to `main` and can also be triggered by hand.
 
 ## How the app runs in production
 
@@ -45,7 +35,7 @@ dev server.
 
 Because of that, the production host needs `vite-node` available at runtime.
 This repo currently lists `vite-node` as a dev dependency and has no `start`
-script, so two small changes are required first.
+script, so two small changes are required before the first deploy.
 
 ## Repo changes to make first
 
@@ -59,82 +49,8 @@ script, so two small changes are required first.
    production-only install (`pnpm install --prod`) still has it. `vite-node`
    pulls in `vite` itself, but **not** Playwright, Biome, or TypeScript.
 
-3. Commit the service unit at `deploy/botbash.service` (already in this repo).
-
-## CI workflow
-
-Create `.github/workflows/ci.yml`:
-
-```yaml
-name: CI
-
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Install Playwright (chromium)
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Lint, unit tests, build
-        run: pnpm check
-
-      - name: End-to-end tests
-        run: pnpm test:e2e
-
-      - name: Upload Playwright report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-```
-
-Notes:
-
-- `pnpm check` is `lint && test && build`. `lint` also runs
-  `scripts/max-lines.mjs`, which fails if any file in `src`, `server`, or
-  `shared` exceeds 300 lines of code.
-- Playwright is part of the same job so a PR cannot merge until the e2e tests
-  pass. With the `~/.cache/ms-playwright` cache warm, the install step drops to
-  a few seconds; the tests themselves take roughly one to three minutes.
-- Playwright's `webServer` starts `pnpm dev` on port 3000 automatically
-  (`playwright.config.ts`).
-- The job runs on `ubuntu-latest` (4 vCPU for public repos, 2 vCPU for
-  private). The suite is single-worker (`workers: 1`), so runner size is not a
-  bottleneck.
+3. Commit the service unit at [`deploy/botbash.service`](../deploy/botbash.service)
+   (already in this repo).
 
 ## CD workflow
 
@@ -358,8 +274,6 @@ A healthy response looks like `{"playerCount":0,"gameCount":0}`.
 | Service exits immediately, `pnpm: command not found` | `mise` shims missing or `PATH` wrong in the unit; verify `~/.local/share/mise/shims/pnpm` exists. |
 | Service exits, `vite-node: command not found` | `vite-node` is still a dev dependency; move it to `dependencies` and redeploy. |
 | nginx returns `502` | The service is down or not listening on `3100`; check `journalctl --user -u botbash`. |
-| CI fails in `max-lines` | A file under `src`, `server`, or `shared` exceeds 300 code lines; split it. |
-| Playwright fails on canvas timing | Re-run the job; if it is consistently flaky, consider adding `retries` to `playwright.config.ts` or `--retries=2` in CI. |
 | `ssh-keyscan` host key mismatch | The host was reinstalled or rotated keys; update the pinned `known_hosts`. |
 
 ## Security notes
