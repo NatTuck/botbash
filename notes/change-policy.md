@@ -109,6 +109,44 @@ curl -X POST https://api.github.com/repos/NatTuck/botbash/rulesets \
 - Only **Squash and merge** is offered.
 - As `NatTuck`, the bypass option is available for emergencies.
 
+## CI before review (fork pull requests)
+
+Workflows triggered by `pull_request` normally start as soon as a pull request
+is opened or updated, which is *before* any review. There is one exception:
+for pull requests from public forks, GitHub holds the run in `action_required`
+until a maintainer approves it. Until then the required `test` check has not
+run, so it can look like CI only happens after review even though the required
+review is a separate, later gate.
+
+To let CI start automatically, set:
+
+**Settings → Actions → General → "Approval for running fork pull request
+workflows from contributors" → Require approval for first-time contributors who
+are new to GitHub → Save.**
+
+Effects and limits:
+
+- Established GitHub users who have not contributed here trigger `test`
+  immediately on `opened`/`synchronize`/`reopened`, before any review.
+- Brand-new GitHub accounts still need a one-time approval. There is no option
+  to disable the gate entirely for public forks.
+- GitHub stops treating a contributor as first-time once *any* commit or pull
+  request of theirs has been merged, so this is a trust heuristic rather than a
+  strict allowlist.
+- The setting is UI-only; it is not exposed by the REST API.
+- Auto-running fork workflows spends runner minutes on untrusted code. The
+  `pull_request` context is the safe one (read-only `GITHUB_TOKEN`, no secrets,
+  ephemeral runner); do not run untrusted test code from `pull_request_target`.
+
+Manually approving a held run (this is not a code review):
+
+- Pull request → **Files changed** → **Approve workflows to run**
+- `gh api -X POST repos/NatTuck/botbash/actions/runs/<run-id>/approve`
+
+This makes CI start earlier; it does **not** order CI before review. Required
+status checks and required reviews remain independent gates that are both
+evaluated at merge.
+
 ## Caveats
 
 - **Check name coupling.** The required check is the job name `test`. Renaming
