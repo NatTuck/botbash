@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cards, cardByName, cardsOfType } from "./cards";
+import { cardByName, cards, cardsOfType } from "./cards";
 
 describe("cards", () => {
 	it("has 10 unique robot duck bots and 50 unique light repairs", () => {

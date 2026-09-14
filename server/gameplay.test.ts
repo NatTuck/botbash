@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { cardByName } from "../shared/cards";
-import type { Game, GameCard, GamePlayer } from "../shared/types";
+import type { Game, GameCard, GamePlayer, ServerState } from "../shared/types";
 import {
 	beginGame,
 	drawPlayerToFive,
@@ -9,7 +9,6 @@ import {
 } from "./gameplay";
 import { createGame, joinGame } from "./games";
 import { getOrCreatePlayer } from "./players";
-import type { ServerState } from "../shared/types";
 
 function cards(count: number): GameCard[] {
 	return Array.from({ length: count }, (_, i) =>

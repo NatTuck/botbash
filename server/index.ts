@@ -1,10 +1,9 @@
-import express from "express";
 import { createServer } from "node:http";
-import ViteExpress from "vite-express";
+import express from "express";
 import { Server } from "socket.io";
-
-import { state } from "./state";
+import ViteExpress from "vite-express";
 import { registerSocketHandlers } from "./sockets";
+import { state } from "./state";
 
 const app = express();
 app.use(express.json());

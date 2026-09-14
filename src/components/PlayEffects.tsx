@@ -1,6 +1,6 @@
-import { Fragment, useCallback, useEffect, useRef } from "react";
-import type { ReactNode } from "react";
 import { animated, useSpring } from "@react-spring/konva";
+import type { ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import { Group, Rect, Text } from "react-konva";
 import type { GameEvent } from "../../shared/types";
 import type { Palette } from "../theme";
@@ -8,15 +8,15 @@ import { CardArt } from "./BoardCard";
 import {
 	BACK_H,
 	BACK_W,
+	backsX,
+	boardX,
 	CARD_H,
 	CARD_W,
 	CUR_BOARD_Y,
 	CUR_HAND_Y,
+	handX,
 	OPP_BOARD_Y,
 	OPP_HAND_Y,
-	backsX,
-	boardX,
-	handX,
 } from "./boardMath";
 
 // react-konva's complex prop types blow up react-spring's AnimatedProps

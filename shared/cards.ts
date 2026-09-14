@@ -33,7 +33,7 @@ const Bits: Omit<Card, "name"> = {
 	hp: { current: 0, max: 0 },
 	status: [],
 	effect: { kind: "damage", amount: 1 },
-}
+};
 
 /** The master list of all cards in the game. Never mutated at runtime. */
 export const cards: Card[] = [

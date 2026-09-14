@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { state } from "./state";
 import { getOrCreatePlayer } from "./players";
+import { state } from "./state";
 
 describe("getOrCreatePlayer", () => {
 	it("creates a player with a starter and default deck when new", () => {

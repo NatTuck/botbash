@@ -186,7 +186,7 @@ function applyEffect(
 	if (effect.kind === "damage") {
 		bot.hp.current = Math.max(0, bot.hp.current - effect.amount);
 	}
-	if(effect.kind === "bits") {
+	if (effect.kind === "bits") {
 		const damage = rollBitsDamage();
 		bot.hp.current = Math.max(0, bot.hp.current - damage);
 	}
