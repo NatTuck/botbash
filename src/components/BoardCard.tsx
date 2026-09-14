@@ -12,6 +12,8 @@ export function effectLabel(effect: CardEffect): string {
 		case "repair":
 			return `Repair ${effect.amount}`;
 	}
+
+	return "";
 }
 
 export function CardArt({
