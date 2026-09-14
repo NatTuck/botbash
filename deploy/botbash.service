@@ -1,0 +1,20 @@
+[Unit]
+Description=Bot Bash game server
+Documentation=https://github.com/NatTuck/botbash
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/botbash/botbash
+Environment=NODE_ENV=production
+Environment=PORT=3100
+Environment=PATH=%h/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.local/share/mise/shims/pnpm start
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

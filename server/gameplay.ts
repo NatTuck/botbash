@@ -226,10 +226,17 @@ export function resolveCombat(game: Game): "over" | "continue" {
 		for (let i = 0; i < 3; i++) {
 			const bot = player.board[i];
 			if (!bot) continue;
-			let targetSlot = 2 - i;
-			if (!opp.board[targetSlot]) targetSlot = 1;
-			const target = opp.board[targetSlot];
-			if (target) target.hp.current = Math.max(0, target.hp.current - bot.atk);
+            if (bot.name.includes("Breadson")) {
+                const target1 = opp.board[0];
+                const target2 = opp.board[2];
+                if (target1) target1.hp.current = Math.max(0, target1.hp.current - bot.atk);
+                if (target2) target2.hp.current = Math.max(0, target2.hp.current - bot.atk);
+            } else {
+                let targetSlot = 2 - i;
+                if (!opp.board[targetSlot]) targetSlot = 1;
+                const target = opp.board[targetSlot];
+                if (target) target.hp.current = Math.max(0, target.hp.current - bot.atk);
+            }
 		}
 	}
 
