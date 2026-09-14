@@ -162,6 +162,17 @@ function resolveScrapHands(game: Game): void {
 	}
 }
 
+function rollBitsDamage(): number {
+	const rollednumber = Math.floor(Math.random() * 256);
+	const binarystring = rollednumber.toString(2).padStart(8, "0");
+
+	let ones = 0;
+	for (const char of binarystring) {
+		if (char === "1") ones++;
+	}
+	return ones;
+}
+
 function applyEffect(
 	effect: NonNullable<GameCard["effect"]>,
 	boardOwner: GamePlayer,
@@ -174,6 +185,10 @@ function applyEffect(
 	}
 	if (effect.kind === "damage") {
 		bot.hp.current = Math.max(0, bot.hp.current - effect.amount);
+	}
+	if(effect.kind === "bits") {
+		const damage = rollBitsDamage();
+		bot.hp.current = Math.max(0, bot.hp.current - damage);
 	}
 }
 
