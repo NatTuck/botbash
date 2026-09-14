@@ -18,6 +18,7 @@ describe("createDefaultDeck", () => {
 		expect(names.some((n) => n.startsWith("Light Repair"))).toBe(true);
 		expect(names.some((n) => n.startsWith("Zap"))).toBe(true);
 		expect(names.some((n) => n.startsWith("Bits"))).toBe(true);
+		expect(names.some((n) => n.startsWith("MS Paint Duck"))).toBe(true);
 	});
 
 	it("returns unique card names across starter and deck", () => {
