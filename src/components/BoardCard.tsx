@@ -9,8 +9,14 @@ export { CARD_W, CARD_H, GAP };
 
 export function effectLabel(effect: CardEffect): string {
 	switch (effect.kind) {
+		case "damage":
+			return `Damage ${effect.amount}`;
+			
 		case "repair":
 			return `Repair ${effect.amount}`;
+
+		case "stun":
+			return "Stun for one combat";
 	}
 }
 
