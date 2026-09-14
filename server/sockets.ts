@@ -1,5 +1,6 @@
 import type { Server as SocketServer } from "socket.io";
-import type { Game, ServerState } from "../shared/types";
+import type { Game, GameEvent, ServerState, Submission } from "../shared/types";
+import { submitAndAdvance } from "./gameplay";
 import {
 	createGame,
 	deleteGame,
@@ -9,8 +10,6 @@ import {
 	summarizeGames,
 } from "./games";
 import { getOrCreatePlayer } from "./players";
-import { submitAndAdvance } from "./gameplay";
-import type { GameEvent, Submission } from "../shared/types";
 
 interface SocketData {
 	username?: string;

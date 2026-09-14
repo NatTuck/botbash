@@ -1,5 +1,4 @@
 import { io } from "socket.io-client";
-import { useGameStore } from "./store";
 import type {
 	Game,
 	GameEvent,
@@ -7,6 +6,7 @@ import type {
 	Player,
 	Submission,
 } from "../shared/types";
+import { useGameStore } from "./store";
 
 /** Single shared socket connection for the whole SPA. */
 export const socket = io();

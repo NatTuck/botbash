@@ -229,10 +229,20 @@ export function resolveCombat(game: Game): "over" | "continue" {
 			);
 			if (isStunned) continue;
 			
-			let targetSlot = 2 - i;
-			if (!opp.board[targetSlot]) targetSlot = 1;
-			const target = opp.board[targetSlot];
-			if (target) target.hp.current = Math.max(0, target.hp.current - bot.atk);
+			if (bot.name.includes("Breadson")) {
+				const target1 = opp.board[0];
+				const target2 = opp.board[2];
+				if (target1)
+					target1.hp.current = Math.max(0, target1.hp.current - bot.atk);
+				if (target2)
+					target2.hp.current = Math.max(0, target2.hp.current - bot.atk);
+			} else {
+				let targetSlot = 2 - i;
+				if (!opp.board[targetSlot]) targetSlot = 1;
+				const target = opp.board[targetSlot];
+				if (target)
+					target.hp.current = Math.max(0, target.hp.current - bot.atk);
+			}
 		}
 	}
 
@@ -276,7 +286,13 @@ export function resolveCombat(game: Game): "over" | "continue" {
 			}
 		}
 	}
-
+	for (const player of [a, b]) {
+		for (const bot of player.board) {
+			if (bot?.name.startsWith("MMM-Sahur")) {
+				bot.atk += 1;
+			}
+		}
+	}
 	const aBots = a.board.filter(Boolean).length;
 	const bBots = b.board.filter(Boolean).length;
 	if (aBots === 0 && bBots === 0) {

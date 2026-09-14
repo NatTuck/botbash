@@ -16,6 +16,8 @@ function duck(hp = 6, atk = 2): GameCard {
 	return card;
 }
 
+function breadson(): GameCard { return structuredClone(cardByName("Breadson 1")); }
+
 function repair(): GameCard {
 	return structuredClone(cardByName("Light Repair 1"));
 }
@@ -264,6 +266,34 @@ describe("combat", () => {
 		expect(resolveCombat(game)).toBe("continue");
 		expect(aBot.hp.current).toBe(4);
 		expect(bBot.hp.current).toBe(4);
+		expect(game.phase).not.toBe("over");
+	});
+
+	it("breadson attacks both sides", () => {
+		const lBot = duck();
+		const breadTest = breadson();
+		const alice = boardPlayer("Alice", [lBot, null, null], []);
+		const bob = boardPlayer("Bob", [null, null, breadTest], []);
+		const game = makeGame([alice, bob], "combat");
+
+		expect(resolveCombat(game)).toBe("continue");
+		expect(lBot.hp.current).toBe(3);
+		expect(game.phase).not.toBe("over");
+	});
+
+	it("breadson attacks both sides", () => {
+		const lBot = duck();
+		const rBot = duck();
+		const mBot = duck();
+		const breadTest = breadson();
+		const alice = boardPlayer("Alice", [lBot, mBot, rBot], []);
+		const bob = boardPlayer("Bob", [null, null, breadTest], []);
+		const game = makeGame([alice, bob], "combat");
+
+		expect(resolveCombat(game)).toBe("continue");
+		expect(lBot.hp.current).toBe(3);
+		expect(rBot.hp.current).toBe(3);
+		expect(mBot.hp.current).toBe(6);
 		expect(game.phase).not.toBe("over");
 	});
 

@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { cardByName } from "../shared/cards";
-import type { Game, GameCard, GamePlayer } from "../shared/types";
+import type { Game, GameCard, GamePlayer, ServerState } from "../shared/types";
 import {
 	beginGame,
 	drawPlayerToFive,
+	resolveCombat,
 	runDrawPhase,
 	seedScrapPile,
 } from "./gameplay";
 import { createGame, joinGame } from "./games";
 import { getOrCreatePlayer } from "./players";
-import type { ServerState } from "../shared/types";
 
 function cards(count: number): GameCard[] {
 	return Array.from({ length: count }, (_, i) =>
@@ -50,6 +50,75 @@ function expectGame(game: Game | null): Game {
 	if (!game) throw new Error("expected a game");
 	return game;
 }
+describe("MMM-Sahur special ability", () => {
+	it("increases MMM-Sahur's atk if it survives combat", () => {
+		const game: Game = {
+			id: "test-game",
+			phase: "combat",
+			turn: 1,
+			observers: [],
+			scrapPile: [],
+			submissions: {},
+			winner: null,
+			players: [
+				{
+					name: "p1",
+					starter: {
+						name: "Starter",
+						type: "bot",
+						atk: 1,
+						hp: { current: 1, max: 1 },
+						status: [],
+					},
+					deck: [],
+					hand: [],
+					board: [
+						null, // Slot 0: Empty
+						{
+							// Slot 1: Center
+							name: "MMM-Sahur 0",
+							type: "bot",
+							atk: 1,
+							hp: { current: 3, max: 3 },
+							status: [],
+						},
+						null, // Slot 2: Empty
+					],
+				},
+				{
+					name: "p2",
+					starter: {
+						name: "Starter",
+						type: "bot",
+						atk: 1,
+						hp: { current: 1, max: 1 },
+						status: [],
+					},
+					deck: [],
+					hand: [],
+					board: [
+						null, // Slot 0: Empty
+						{
+							// Slot 1: Center
+							name: "Robot Duck 0",
+							type: "bot",
+							atk: 1,
+							hp: { current: 5, max: 5 },
+							status: [],
+						},
+						null, // Slot 2: Empty
+					],
+				},
+			],
+		};
+
+		// Run the combat resolution
+		resolveCombat(game);
+
+		// Check board[1] because we put the bot in the center slot
+		expect(game.players[0].board[1]?.atk).toBe(2);
+	});
+});
 
 describe("drawPlayerToFive", () => {
 	it("draws from the deck up to a full hand", () => {

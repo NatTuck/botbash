@@ -11,6 +11,13 @@ const duck: Omit<Card, "name"> = {
 	status: [],
 };
 
+const breadson: Omit<Card, "name"> = {
+	type: "bot",
+	atk: 3,
+	hp: { current: 4, max: 4 },
+	status: [],
+};
+
 const repair: Omit<Card, "name"> = {
 	type: "action",
 	atk: 0,
@@ -34,16 +41,28 @@ const duckAndRoll: Omit<Card, "name"> = {
 	status: [],
 	effect: { kind: "stun" },
 };
+const mmmSahur: Omit<Card, "name"> = {
+	type: "bot",
+	atk: 1,
+	hp: { current: 6, max: 6 },
+	status: [],
+};
+const mspaint: Omit<Card, "name"> = {
+	type: "bot",
+	atk: 1,
+	hp: { current: 12, max: 12 },
+	status: [],
+};
 
 /** The master list of all cards in the game. Never mutated at runtime. */
 export const cards: Card[] = [
-	...range(10).map((n) => ({ ...duck, name: `Robot Duck ${n}` })),
+	...range(12).map((n) => ({ ...duck, name: `Robot Duck ${n}` })),
 	...range(20).map((n) => ({ ...repair, name: `Light Repair ${n}` })),
 	...range(20).map((n) => ({ ...zap, name: `Zap ${n}` })),
-	...range(10).map((n) => ({
-		...duckAndRoll,
-		name: `Duck and Roll ${n}`,
-	})),
+	...range(10).map((n) => ({ ...duckAndRoll, name: `Duck and Roll ${n}` })),
+	...range(2).map((n) => ({ ...breadson, name: `Breadson ${n}` })),
+	...range(4).map((n) => ({ ...mmmSahur, name: `MMM-Sahur ${n}` })), //amount in deck
+	...range(2).map((n) => ({ ...mspaint, name: `MS Paint Duck ${n}` })),
 ];
 
 /** All card names, unique. */

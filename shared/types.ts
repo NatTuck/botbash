@@ -28,20 +28,20 @@ export type GameCard = Card;
  */
 export type GameEvent =
 	| {
-		kind: "deploy";
-		player: string;
-		handIndex: number;
-		card: GameCard;
-		slot: number;
-	}
+			kind: "deploy";
+			player: string;
+			handIndex: number;
+			card: GameCard;
+			slot: number;
+	  }
 	| {
-		kind: "action";
-		player: string;
-		handIndex: number;
-		card: GameCard;
-		board: string;
-		slot: number;
-	};
+			kind: "action";
+			player: string;
+			handIndex: number;
+			card: GameCard;
+			board: string;
+			slot: number;
+	  };
 
 /** A player's persistent identity and deck (lobby-side). */
 export interface Player {

@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import Login from "./routes/Login";
 import Dashboard from "./routes/Dashboard";
 import Game from "./routes/Game";
+import Login from "./routes/Login";
 
 export default function App() {
 	return (

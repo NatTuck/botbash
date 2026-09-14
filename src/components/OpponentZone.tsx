@@ -2,11 +2,11 @@ import { Rect, Text } from "react-konva";
 import type { GameCard, GamePlayer } from "../../shared/types";
 import type { Palette } from "../theme";
 import { CardArt } from "./BoardCard";
-import { CardBack } from "./CardBack";
-import { CardStack } from "./CardStack";
 import {
 	BACK_H,
 	BACK_W,
+	backsX,
+	boardX,
 	DECK_H,
 	DECK_W,
 	DECK_X,
@@ -15,9 +15,9 @@ import {
 	OPP_DECK_Y,
 	OPP_HAND_Y,
 	OPP_NAME_Y,
-	backsX,
-	boardX,
 } from "./boardMath";
+import { CardBack } from "./CardBack";
+import { CardStack } from "./CardStack";
 
 export function OpponentZone({
 	opponent,
