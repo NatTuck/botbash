@@ -1,6 +1,6 @@
 import { Group, Image as KonvaImage, Rect } from "react-konva";
-import type { Palette } from "../theme";
 import { CARD_BACK, useCardImage } from "../cardImages";
+import type { Palette } from "../theme";
 
 /** A card back rendered from the card-back image, sized to fit. */
 export function CardBack({

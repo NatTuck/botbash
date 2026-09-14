@@ -1,11 +1,10 @@
-import { Text } from "react-konva";
 import type { KonvaEventObject } from "konva/lib/Node";
+import { Text } from "react-konva";
 import type { GameCard, GamePlayer } from "../../shared/types";
 import type { Palette } from "../theme";
 import { CardArt } from "./BoardCard";
-import { CardBack } from "./CardBack";
-import { CardStack } from "./CardStack";
 import {
+	boardX,
 	CARD_H,
 	CARD_W,
 	CUR_BOARD_Y,
@@ -16,10 +15,11 @@ import {
 	DECK_W,
 	DECK_X,
 	DESIGN_W,
-	boardX,
 	handX,
 	isPlayable,
 } from "./boardMath";
+import { CardBack } from "./CardBack";
+import { CardStack } from "./CardStack";
 
 export function CurrentZone({
 	current,

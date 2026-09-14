@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cards, cardByName, cardsOfType } from "./cards";
+import { cardByName, cards, cardsOfType } from "./cards";
 
 describe("cards", () => {
 	it("has 10 unique robot duck bots 10 unique ms paint duck and 50 unique light repairs", () => {
@@ -18,13 +18,13 @@ describe("cards", () => {
 		expect(duck.effect).toBeUndefined();
 	});
 
-    it("gives Breaadson its stats", () => {
-        const duck = cardByName("Breadson 1");
+	it("gives Breaadson its stats", () => {
+		const duck = cardByName("Breadson 1");
 		expect(duck.type).toBe("bot");
 		expect(duck.atk).toBe(3);
 		expect(duck.hp).toEqual({ current: 4, max: 4 });
 		expect(duck.effect).toBeUndefined();
-    });
+	});
 
 	it("gives Light Repair a repair effect", () => {
 		const repair = cardByName("Light Repair 1");

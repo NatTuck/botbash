@@ -17,10 +17,10 @@ function duck(hp = 6, atk = 2): GameCard {
 }
 
 function breadson(hp = 4, atk = 3): GameCard {
-    const card = structuredClone(cardByName("Breadson 1"));
-    card.hp.current = hp;
-    card.atk = atk;
-    return card
+	const card = structuredClone(cardByName("Breadson 1"));
+	card.hp.current = hp;
+	card.atk = atk;
+	return card;
 }
 
 function repair(): GameCard {
@@ -200,33 +200,33 @@ describe("combat", () => {
 		expect(game.phase).not.toBe("over");
 	});
 
-    it("breadson attacks both sides", () => {
-        const lBot = duck();
-        const breadTest = breadson();
-        const alice = boardPlayer("Alice", [lBot, null, null], []);
-        const bob = boardPlayer("Bob", [null, null, breadTest], []);
-        const game = makeGame([alice, bob], "combat");
+	it("breadson attacks both sides", () => {
+		const lBot = duck();
+		const breadTest = breadson();
+		const alice = boardPlayer("Alice", [lBot, null, null], []);
+		const bob = boardPlayer("Bob", [null, null, breadTest], []);
+		const game = makeGame([alice, bob], "combat");
 
 		expect(resolveCombat(game)).toBe("continue");
 		expect(lBot.hp.current).toBe(3);
 		expect(game.phase).not.toBe("over");
-    });
+	});
 
-    it("breadson attacks both sides", () => {
-        const lBot = duck();
-        const rBot = duck();
-        const mBot = duck();
-        const breadTest = breadson();
-        const alice = boardPlayer("Alice", [lBot, mBot, rBot], []);
-        const bob = boardPlayer("Bob", [null, null, breadTest], []);
-        const game = makeGame([alice, bob], "combat");
+	it("breadson attacks both sides", () => {
+		const lBot = duck();
+		const rBot = duck();
+		const mBot = duck();
+		const breadTest = breadson();
+		const alice = boardPlayer("Alice", [lBot, mBot, rBot], []);
+		const bob = boardPlayer("Bob", [null, null, breadTest], []);
+		const game = makeGame([alice, bob], "combat");
 
 		expect(resolveCombat(game)).toBe("continue");
 		expect(lBot.hp.current).toBe(3);
 		expect(rBot.hp.current).toBe(3);
 		expect(mBot.hp.current).toBe(6);
 		expect(game.phase).not.toBe("over");
-    });
+	});
 
 	it("sends a killed bot to the scrap pile and declares a winner", () => {
 		const aBot = duck(2);
