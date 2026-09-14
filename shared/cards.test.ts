@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cardByName, cards, cardsOfType } from "./cards";
 
 describe("cards", () => {
-	it("has 10 unique robot duck bots 10 unique ms paint duck and 50 unique light repairs", () => {
+	it("has 20 unique robot duck bots and 50 unique actions", () => {
 		const bots = cardsOfType("bot");
 		const actions = cardsOfType("action");
 		expect(bots).toHaveLength(20);
@@ -30,5 +30,15 @@ describe("cards", () => {
 		const repair = cardByName("Light Repair 1");
 		expect(repair.type).toBe("action");
 		expect(repair.effect).toEqual({ kind: "repair", amount: 1 });
+	});
+
+	it("has 10 Duck and Roll cards with a stun effect", () => {
+		const duckAndRollCards = cards.filter((card) =>
+			card.name.startsWith("Duck and Roll"),
+		);
+
+		expect(duckAndRollCards).toHaveLength(10);
+		expect(duckAndRollCards[0].type).toBe("action");
+		expect(duckAndRollCards[0].effect).toEqual({ kind: "stun" });
 	});
 });

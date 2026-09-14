@@ -8,6 +8,7 @@ import {
 	CUR_HAND_Y,
 	DESIGN_H,
 	DESIGN_W,
+	OPP_BOARD_Y,
 	boardX,
 	handX,
 } from "../src/boardLayout";
@@ -66,6 +67,10 @@ export function handCenter(index: number): { lx: number; ly: number } {
 
 export function slotCenter(slot: number): { lx: number; ly: number } {
 	return { lx: boardX(slot) + CARD_W / 2, ly: CUR_BOARD_Y + CARD_H / 2 };
+}
+
+export function opponentSlotCenter(slot: number): { lx: number; ly: number } {
+	return { lx: boardX(2 - slot) + CARD_W / 2, ly: OPP_BOARD_Y + CARD_H / 2 };
 }
 
 /** The in-board PASS button (below the scrap pile). */

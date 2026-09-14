@@ -2,7 +2,8 @@ export type CardType = "bot" | "action";
 
 export type CardEffect =
 	| { kind: "damage"; amount: number }
-	| { kind: "repair"; amount: number };
+	| { kind: "repair"; amount: number }
+	| { kind: "stun" }; // doesnt need amount since it always lasts for one combat
 
 export type CardStatus =
 	| { kind: "temporary"; name: string; turnsRemaining: number }
