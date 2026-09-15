@@ -8,7 +8,7 @@ const MAP: Record<string, string> = {
 	Breadson: "/images/breadson.png",
 	Zap: "/images/zap.jpg",
 	"MMM-Sahur": "/images/MMM-Sahur.jpg",
-	"MS Paint Duck": "MS Paint Duck.png",
+	"MS Paint Duck": "/images/MS Paint Duck.png",
 	EMP: "/images/emp.png",
 };
 
