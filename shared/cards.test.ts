@@ -6,7 +6,7 @@ describe("cards", () => {
 		const bots = cardsOfType("bot");
 		const actions = cardsOfType("action");
 		expect(bots).toHaveLength(20);
-		expect(actions).toHaveLength(50);
+		expect(actions).toHaveLength(53);
 		expect(new Set(cards.map((c) => c.name)).size).toBe(cards.length);
 	});
 
@@ -30,5 +30,11 @@ describe("cards", () => {
 		const repair = cardByName("Light Repair 1");
 		expect(repair.type).toBe("action");
 		expect(repair.effect).toEqual({ kind: "repair", amount: 1 });
+	});
+
+	it("gives EMP a destroy effect", () => {
+		const emp = cardByName("EMP 1");
+		expect(emp.type).toBe("action");
+		expect(emp.effect).toEqual({ kind: "destroy" });
 	});
 });

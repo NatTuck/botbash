@@ -47,6 +47,14 @@ const mspaint: Omit<Card, "name"> = {
 	status: [],
 };
 
+const emp: Omit<Card, "name"> = {
+	type: "action",
+	atk: 0,
+	hp: { current: 0, max: 0 },
+	status: [],
+	effect: { kind: "destroy" },
+};
+
 /** The master list of all cards in the game. Never mutated at runtime. */
 export const cards: Card[] = [
 	...range(2).map((n) => ({ ...breadson, name: `Breadson ${n}` })),
@@ -55,6 +63,7 @@ export const cards: Card[] = [
 	...range(25).map((n) => ({ ...zap, name: `Zap ${n}` })),
 	...range(4).map((n) => ({ ...mmmSahur, name: `MMM-Sahur ${n}` })), //amount in deck
 	...range(2).map((n) => ({ ...mspaint, name: `MS Paint Duck ${n}` })),
+	...range(3).map((n) => ({ ...emp, name: `EMP ${n}` })),
 ];
 
 /** All card names, unique. */

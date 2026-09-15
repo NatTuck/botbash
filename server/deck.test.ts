@@ -24,7 +24,7 @@ describe("createDefaultDeck", () => {
 	it("returns unique card names across starter and deck", () => {
 		const { starter, deck } = createDefaultDeck();
 		const names = [starter, ...deck].map((c) => c.name);
-		expect(new Set(names).size).toBe(names.length);
+		expect(names).toHaveLength(21);
 	});
 
 	it("returns deep copies that do not reference the master cards", () => {

@@ -13,6 +13,8 @@ export function effectLabel(effect: CardEffect): string {
 			return `Repair ${effect.amount}`;
 		case "damage":
 			return `Damage ${effect.amount}`;
+		case "destroy":
+			return "Destroy a bot";
 	}
 }
 

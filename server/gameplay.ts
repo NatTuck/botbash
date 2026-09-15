@@ -164,9 +164,18 @@ function resolveScrapHands(game: Game): void {
 
 function applyEffect(
 	effect: NonNullable<GameCard["effect"]>,
+	game: Game,
 	boardOwner: GamePlayer,
 	slot: number,
 ): void {
+	if (effect.kind === "destroy") {
+		const bot = boardOwner.board[slot];
+		if (bot) {
+			game.scrapPile.push(bot);
+			boardOwner.board[slot] = null;
+		}
+		return;
+	}
 	const bot = boardOwner.board[slot];
 	if (!bot) return;
 	if (effect.kind === "repair") {
@@ -185,7 +194,7 @@ export function resolveAction(game: Game, events: GameEvent[]): void {
 		if (sub?.kind !== "action") continue;
 		const [card] = player.hand.splice(sub.handIndex, 1);
 		const boardOwner = game.players.find((p) => p.name === sub.board) ?? player;
-		if (card.effect) applyEffect(card.effect, boardOwner, sub.slot);
+		if (card.effect) applyEffect(card.effect, game, boardOwner, sub.slot);
 		game.scrapPile.push(card);
 		events.push({
 			kind: "action",

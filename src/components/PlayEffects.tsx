@@ -112,7 +112,12 @@ function FlyingCard({
 	const from = sourcePoint(event, viewer);
 	const to = targetPoint(event, viewer);
 	const isAction = event.kind === "action";
-	const amount = event.card.effect?.amount ?? 0;
+	const effect = event.card.effect;
+	const amount =
+		effect?.kind === "damage" || effect?.kind === "repair"
+			? effect.amount
+			: 0;
+	const label = effect?.kind === "destroy" ? "DESTROY" : `+${amount}`;
 
 	// The whole timeline lives in ONE spring (fly, then the action flash), so
 	// nothing calls setState mid-animation and re-renders can't restart it.
@@ -197,7 +202,7 @@ function FlyingCard({
 						y={props.labelY}
 						width={CARD_W}
 						align="center"
-						text={`+${amount}`}
+						text={label}
 						fontSize={22}
 						fontFamily="Orbitron, sans-serif"
 						fontStyle="bold"

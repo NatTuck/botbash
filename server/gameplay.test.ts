@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { cardByName } from "../shared/cards";
-import type { Game, GameCard, GamePlayer, ServerState } from "../shared/types";
+import type {
+	Game,
+	GameCard,
+	GameEvent,
+	GamePlayer,
+	ServerState,
+} from "../shared/types";
 import {
 	beginGame,
 	drawPlayerToFive,
+	resolveAction,
 	resolveCombat,
 	runDrawPhase,
 	seedScrapPile,
@@ -117,6 +124,63 @@ describe("MMM-Sahur special ability", () => {
 
 		// Check board[1] because we put the bot in the center slot
 		expect(game.players[0].board[1]?.atk).toBe(2);
+	});
+});
+
+describe("EMP destroy", () => {
+	it("instantly destroys the targeted bot but leaves the rest", () => {
+		const game: Game = {
+			id: "emp",
+			phase: "action",
+			turn: 1,
+			observers: [],
+			scrapPile: [],
+			submissions: {},
+			winner: null,
+			players: [
+				{
+					name: "p1",
+					starter: cardByName("Robot Duck 1"),
+					deck: [],
+					hand: [cardByName("EMP 1")],
+					board: [
+						cardByName("Robot Duck 2"),
+						cardByName("Robot Duck 3"),
+						null,
+					],
+				},
+				{
+					name: "p2",
+					starter: cardByName("Robot Duck 4"),
+					deck: [],
+					hand: [],
+					board: [
+						null,
+						cardByName("MMM-Sahur 1"),
+						cardByName("Breadson 1"),
+					],
+				},
+			],
+		};
+		game.submissions = {
+			p1: { kind: "action", handIndex: 0, board: "p2", slot: 1 },
+		};
+
+		const events: GameEvent[] = [];
+		resolveAction(game, events);
+
+		// Targeted bot is gone; everything else survives.
+		expect(game.players[1].board[1]).toBeNull();
+		expect(game.players[0].board[0]?.name).toBe("Robot Duck 2");
+		expect(game.players[0].board[1]?.name).toBe("Robot Duck 3");
+		expect(game.players[1].board[2]?.name).toBe("Breadson 1");
+		// Destroyed bot + the spent EMP
+		expect(game.scrapPile).toHaveLength(2);
+		expect(events[0]).toMatchObject({
+			kind: "action",
+			player: "p1",
+			card: { name: "EMP 1" },
+		});
 	});
 });
 

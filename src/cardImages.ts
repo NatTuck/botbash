@@ -9,6 +9,7 @@ const MAP: Record<string, string> = {
 	Zap: "/images/zap.jpg",
 	"MMM-Sahur": "/images/MMM-Sahur.jpg",
 	"MS Paint Duck": "MS Paint Duck.png",
+	EMP: "/images/emp.png",
 };
 
 /** Maps a card name to its image URL, if one exists. */

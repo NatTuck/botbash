@@ -10,25 +10,57 @@ function shuffle<T>(items: T[]): T[] {
 	return arr;
 }
 
-export interface DefaultDeck {
-	/** The player's designated starter bot. */
-	starter: Card;
-	/** The remaining 20 cards: 5 bots and 15 non-bot cards. */
-	deck: Card[];
+function clone(c: Card): Card {
+	return structuredClone(c);
 }
 
-/**
- * A new player's starting cards: a random starter bot plus a deck of 5 bots and
- * 15 non-bot cards. Returns deep copies so runtime mutations never touch the
- * master card list.
- */
-export function createDefaultDeck(): DefaultDeck {
-	const bots = shuffle(cardsOfType("bot")).slice(0, 6);
-	const actions = shuffle(cardsOfType("action")).slice(0, 15);
+/** Repeats cards until the pool produces the requested count (allows duplicates). */
+function cycleFill(pool: Card[], count: number): Card[] {
+	if (pool.length === 0) throw new Error("Cannot fill a deck from an empty pool");
+	const out: Card[] = [];
+	for (let i = 0; i < count; i++) out.push(clone(pool[i % pool.length]));
+	return out;
+}
 
-	const [starter, ...restBots] = bots.map((c) => structuredClone(c));
-	return {
-		starter,
-		deck: [...restBots, ...actions.map((c) => structuredClone(c))],
-	};
+function findName(cards: Card[], prefix: string): Card {
+	const found = cards.find((c) => c.name.startsWith(prefix));
+	if (!found) throw new Error("Deck requires a card named " + prefix);
+	return found;
+}
+
+export function createDefaultDeck(): { starter: Card; deck: Card[] } {
+	const bots = cardsOfType("bot");
+	const actions = cardsOfType("action");
+
+	const starter = clone(findName(bots, "Robot Duck"));
+
+	const sigBots = [
+		clone(findName(bots, "MMM-Sahur")),
+		clone(findName(bots, "MS Paint Duck")),
+	];
+	const fillBots = cycleFill(
+		bots.filter(
+			(c) =>
+				!c.name.startsWith("Robot Duck") &&
+				!c.name.startsWith("MMM-Sahur") &&
+				!c.name.startsWith("MS Paint Duck")
+		),
+		3
+	);
+
+	const sigActions = [
+		clone(findName(actions, "Light Repair")),
+		clone(findName(actions, "Zap")),
+	];
+	const fillActions = cycleFill(
+		actions.filter(
+			(c) =>
+				!c.name.startsWith("Light Repair") &&
+				!c.name.startsWith("Zap")
+		),
+		13
+	);
+
+	const deck = shuffle([...sigBots, ...fillBots, ...sigActions, ...fillActions].map(clone));
+	return { starter, deck };
 }
