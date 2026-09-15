@@ -113,6 +113,11 @@ function FlyingCard({
 	const to = targetPoint(event, viewer);
 	const isAction = event.kind === "action";
 	const effect = event.card.effect;
+	const amount =
+		effect?.kind === "damage" || effect?.kind === "repair"
+			? effect.amount
+			: 0;
+	const label = effect?.kind === "destroy" ? "DESTROY" : `+${amount}`;
 	let actionLabel = "";
 
 	if (effect?.kind === "stun") {
@@ -205,6 +210,7 @@ function FlyingCard({
 						y={props.labelY}
 						width={CARD_W}
 						align="center"
+						text={label}
 						text={actionLabel}
 						fontSize={22}
 						fontFamily="Orbitron, sans-serif"

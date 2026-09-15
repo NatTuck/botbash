@@ -6,7 +6,7 @@ describe("cards", () => {
 		const bots = cardsOfType("bot");
 		const actions = cardsOfType("action");
 		expect(bots).toHaveLength(20);
-		expect(actions).toHaveLength(50);
+		expect(actions).toHaveLength(53);
 		expect(new Set(cards.map((c) => c.name)).size).toBe(cards.length);
 	});
 

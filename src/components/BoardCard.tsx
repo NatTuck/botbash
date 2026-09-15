@@ -11,6 +11,8 @@ export function effectLabel(effect: CardEffect): string {
 	switch (effect.kind) {
 		case "damage":
 			return `Damage ${effect.amount}`;
+		case "destroy":
+			return "Destroy a bot";
 		case "repair":
 			return `Repair ${effect.amount}`;
 

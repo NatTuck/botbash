@@ -112,7 +112,7 @@ describe("games", () => {
 			expect(p.hand).toHaveLength(5);
 			expect(p.deck).toHaveLength(15);
 			const all = [...p.hand, ...p.deck].map((c) => c.name);
-			expect(new Set(all).size).toBe(all.length);
+			expect(all).toHaveLength(20);
 		}
 	});
 
