@@ -30,7 +30,7 @@ export default function Login() {
 					BOT BASH
 				</h1>
 				<p className="mb-6 text-center text-xs tracking-widest text-muted">
-					RUSTY · NEON · RETRO
+					ROBOTS FIGHT ROBOTS
 				</p>
 
 				<form onSubmit={listGames} className="flex flex-col gap-4">
