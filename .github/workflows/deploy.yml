@@ -55,6 +55,7 @@ jobs:
             "set -euo pipefail && \
              cd $DEPLOY_PATH && \
              export PATH=\$HOME/.local/share/mise/shims:\$PATH && \
+             export CI=true && \
              pnpm install --frozen-lockfile --prod && \
              export XDG_RUNTIME_DIR=/run/user/\$(id -u) && \
              systemctl --user restart botbash && \
