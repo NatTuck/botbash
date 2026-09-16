@@ -1,0 +1,62 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_HOST: ettin.homework.quest
+  DEPLOY_USER: botbash
+  DEPLOY_PATH: /home/botbash/botbash
+  APP_PORT: "3100"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Load deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Trust host key
+        run: ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync Everything
+        run: |
+          rsync -az --delete ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Install dependencies and restart
+        run: |
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" \
+            "set -euo pipefail && \
+             cd $DEPLOY_PATH && \
+             export PATH=\$HOME/.local/share/mise/shims:\$PATH && \
+             pnpm install --frozen-lockfile --prod && \
+             export XDG_RUNTIME_DIR=/run/user/\$(id -u) && \
+             systemctl --user restart botbash && \
+             sleep 2 && \
+             curl -fsS http://localhost:$APP_PORT/api/state"
