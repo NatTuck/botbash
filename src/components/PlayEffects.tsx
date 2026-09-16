@@ -1,6 +1,6 @@
-import { Fragment, useCallback, useEffect, useRef } from "react";
-import type { ReactNode } from "react";
 import { animated, useSpring } from "@react-spring/konva";
+import type { ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import { Group, Rect, Text } from "react-konva";
 import type { GameEvent } from "../../shared/types";
 import type { Palette } from "../theme";
@@ -8,15 +8,15 @@ import { CardArt } from "./BoardCard";
 import {
 	BACK_H,
 	BACK_W,
+	backsX,
+	boardX,
 	CARD_H,
 	CARD_W,
 	CUR_BOARD_Y,
 	CUR_HAND_Y,
+	handX,
 	OPP_BOARD_Y,
 	OPP_HAND_Y,
-	backsX,
-	boardX,
-	handX,
 } from "./boardMath";
 
 // react-konva's complex prop types blow up react-spring's AnimatedProps
@@ -112,7 +112,15 @@ function FlyingCard({
 	const from = sourcePoint(event, viewer);
 	const to = targetPoint(event, viewer);
 	const isAction = event.kind === "action";
-	const amount = event.card.effect?.amount ?? 0;
+	const effect = event.card.effect;
+	let actionLabel = "";
+
+	if (effect?.kind === "stun") {
+		actionLabel = "STUNNED";
+	} else if (effect) {
+		const sign = effect.kind === "damage" ? "-" : "+";
+		actionLabel = `${sign}${effect.amount}`;
+	}
 
 	// The whole timeline lives in ONE spring (fly, then the action flash), so
 	// nothing calls setState mid-animation and re-renders can't restart it.
@@ -197,7 +205,7 @@ function FlyingCard({
 						y={props.labelY}
 						width={CARD_W}
 						align="center"
-						text={`+${amount}`}
+						text={actionLabel}
 						fontSize={22}
 						fontFamily="Orbitron, sans-serif"
 						fontStyle="bold"

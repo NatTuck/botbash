@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useGameStore } from "../store";
-import { emitJoinGame, emitLogin, emitSubmit } from "../socket";
-import GameBoard from "../components/GameBoard";
-import { isPlayable } from "../boardLayout";
 import type {
-	Game as GameState,
 	GameCard,
+	Game as GameState,
 	Submission,
 } from "../../shared/types";
+import { isPlayable } from "../boardLayout";
+import GameBoard from "../components/GameBoard";
+import { emitJoinGame, emitLogin, emitSubmit } from "../socket";
+import { useGameStore } from "../store";
 
 function targetIsValid(
 	game: GameState | null,

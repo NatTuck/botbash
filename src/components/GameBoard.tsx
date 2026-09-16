@@ -1,31 +1,31 @@
-import { useEffect, useRef, useState } from "react";
-import { Group, Layer, Rect, Stage, Text } from "react-konva";
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { Stage as KonvaStage } from "konva/lib/Stage";
+import { useEffect, useRef, useState } from "react";
+import { Group, Layer, Rect, Stage, Text } from "react-konva";
 import type { Game, GameCard, GameEvent, Submission } from "../../shared/types";
 import { getPalette } from "../theme";
 import { CardArt } from "./BoardCard";
-import { CardStack } from "./CardStack";
-import { GameButton } from "./Controls";
-import { CurrentZone } from "./CurrentZone";
-import { OpponentZone } from "./OpponentZone";
-import { PlayEffects } from "./PlayEffects";
 import {
+	BOARD_TOTAL,
+	boardX,
 	CARD_H,
 	CARD_W,
 	CENTER_H,
 	CENTER_Y,
 	CUR_BOARD_Y,
 	CUR_HAND_Y,
+	centerX,
 	DESIGN_H,
 	DESIGN_W,
-	BOARD_TOTAL,
-	OPP_BOARD_Y,
-	boardX,
-	centerX,
 	findTarget,
 	handX,
+	OPP_BOARD_Y,
 } from "./boardMath";
+import { CardStack } from "./CardStack";
+import { GameButton } from "./Controls";
+import { CurrentZone } from "./CurrentZone";
+import { OpponentZone } from "./OpponentZone";
+import { PlayEffects } from "./PlayEffects";
 
 export default function GameBoard({
 	game,
@@ -94,7 +94,7 @@ export default function GameBoard({
 					name?: () => string;
 				} | null;
 				hit = node
-					? `${node.getType?.() ?? "?"}${node.name?.() ? ":" + node.name() : ""}`
+					? `${node.getType?.() ?? "?"}${node.name?.() ? `:${node.name()}` : ""}`
 					: "none";
 			} catch {
 				hit = "none";

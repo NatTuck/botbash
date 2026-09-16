@@ -1,6 +1,6 @@
 import { Group, Image as KonvaImage, Rect, Text } from "react-konva";
-import type { Palette } from "../theme";
 import { CARD_BACK, useCardImage } from "../cardImages";
+import type { Palette } from "../theme";
 
 /** A stack of card backs for the draw deck / scrap pile, with a label + count. */
 export function CardStack({

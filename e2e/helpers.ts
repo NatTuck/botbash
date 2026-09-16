@@ -8,6 +8,7 @@ import {
 	CUR_HAND_Y,
 	DESIGN_H,
 	DESIGN_W,
+	OPP_BOARD_Y,
 	boardX,
 	handX,
 } from "../src/boardLayout";
@@ -68,10 +69,28 @@ export function slotCenter(slot: number): { lx: number; ly: number } {
 	return { lx: boardX(slot) + CARD_W / 2, ly: CUR_BOARD_Y + CARD_H / 2 };
 }
 
+export function opponentSlotCenter(slot: number): { lx: number; ly: number } {
+	return { lx: boardX(2 - slot) + CARD_W / 2, ly: OPP_BOARD_Y + CARD_H / 2 };
+}
+
 /** The in-board PASS button (below the scrap pile). */
 const PASS_CENTER = { lx: 840, ly: 419 };
 
 export async function clickPass(page: Page): Promise<void> {
+	// The PASS button only renders while the player is able to act.
+	await page.waitForFunction(
+		() =>
+			(window as unknown as Record<string, unknown>).__botbash?.canAct === true,
+	);
+	// Konva rebuilds its hit graph on the frame after a React commit. Without
+	// waiting a frame, a click can land before the button is hit-testable and
+	// be silently dropped.
+	await page.evaluate(
+		() =>
+			new Promise<void>((resolve) => {
+				requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+			}),
+	);
 	const p = await canvasPoint(page, PASS_CENTER.lx, PASS_CENTER.ly);
 	await page.mouse.click(p.x, p.y);
 }

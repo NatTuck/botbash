@@ -1,16 +1,21 @@
-import { Group, Image as KonvaImage, Rect, Text } from "react-konva";
 import type { KonvaEventObject } from "konva/lib/Node";
+import { Group, Image as KonvaImage, Rect, Text } from "react-konva";
 import type { CardEffect, GameCard } from "../../shared/types";
-import type { Palette } from "../theme";
+import { CARD_H, CARD_W, GAP } from "../boardLayout";
 import { imageForCard, useCardImage } from "../cardImages";
-import { CARD_W, CARD_H, GAP } from "../boardLayout";
+import type { Palette } from "../theme";
 
-export { CARD_W, CARD_H, GAP };
+export { CARD_H, CARD_W, GAP };
 
 export function effectLabel(effect: CardEffect): string {
 	switch (effect.kind) {
+		case "damage":
+			return `Damage ${effect.amount}`;
 		case "repair":
 			return `Repair ${effect.amount}`;
+
+		case "stun":
+			return "Stun for one combat";
 	}
 }
 

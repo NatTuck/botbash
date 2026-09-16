@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { cards, cardByName, cardsOfType } from "./cards";
+import { cardByName, cards, cardsOfType } from "./cards";
 
 describe("cards", () => {
-	it("has 10 unique robot duck bots and 50 unique light repairs", () => {
+	it("has 20 unique robot duck bots and 50 unique actions", () => {
 		const bots = cardsOfType("bot");
 		const actions = cardsOfType("action");
-		expect(bots).toHaveLength(10);
+		expect(bots).toHaveLength(20);
 		expect(actions).toHaveLength(50);
 		expect(new Set(cards.map((c) => c.name)).size).toBe(cards.length);
 	});
@@ -18,17 +18,27 @@ describe("cards", () => {
 		expect(duck.effect).toBeUndefined();
 	});
 
-    it("gives Breaadson its stats", () => {
-        const duck = cardByName("Breadson 1");
+	it("gives Breaadson its stats", () => {
+		const duck = cardByName("Breadson 1");
 		expect(duck.type).toBe("bot");
 		expect(duck.atk).toBe(3);
 		expect(duck.hp).toEqual({ current: 4, max: 4 });
 		expect(duck.effect).toBeUndefined();
-    });
+	});
 
 	it("gives Light Repair a repair effect", () => {
 		const repair = cardByName("Light Repair 1");
 		expect(repair.type).toBe("action");
 		expect(repair.effect).toEqual({ kind: "repair", amount: 1 });
+	});
+
+	it("has 10 Duck and Roll cards with a stun effect", () => {
+		const duckAndRollCards = cards.filter((card) =>
+			card.name.startsWith("Duck and Roll"),
+		);
+
+		expect(duckAndRollCards).toHaveLength(10);
+		expect(duckAndRollCards[0].type).toBe("action");
+		expect(duckAndRollCards[0].effect).toEqual({ kind: "stun" });
 	});
 });

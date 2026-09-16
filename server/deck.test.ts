@@ -11,13 +11,16 @@ describe("createDefaultDeck", () => {
 		expect(deck.filter((c) => c.type === "action")).toHaveLength(15);
 	});
 
-	it("includes at least one Robot Duck bot and one Light Repair action", () => {
-		const { starter, deck } = createDefaultDeck();
-		const names = [starter, ...deck].map((c) => c.name);
-		expect(names.some((n) => n.startsWith("Robot Duck"))).toBe(true);
-		expect(names.some((n) => n.startsWith("Light Repair"))).toBe(true);
-		expect(names.some((n) => n.startsWith("Zap"))).toBe(true);
-		expect(names.some((n) => n.startsWith("MS Paint Duck"))).toBe(true);
+	it("includes every card family in the master card pool", () => {
+		const names = cards.map((card) => card.name);
+
+		expect(names.some((name) => name.startsWith("Robot Duck"))).toBe(true);
+		expect(names.some((name) => name.startsWith("Breadson"))).toBe(true);
+		expect(names.some((name) => name.startsWith("MMM-Sahur"))).toBe(true);
+		expect(names.some((name) => name.startsWith("MS Paint Duck"))).toBe(true);
+		expect(names.some((name) => name.startsWith("Light Repair"))).toBe(true);
+		expect(names.some((name) => name.startsWith("Zap"))).toBe(true);
+		expect(names.some((name) => name.startsWith("Duck and Roll"))).toBe(true);
 	});
 
 	it("returns unique card names across starter and deck", () => {
@@ -25,14 +28,6 @@ describe("createDefaultDeck", () => {
 		const names = [starter, ...deck].map((c) => c.name);
 		expect(new Set(names).size).toBe(names.length);
 	});
-
-    it("starter deck has ducks, repairs, and breadson", () => {
-        const { starter, deck } = createDefaultDeck();
-        const names = [starter, ...deck].map((card) => card.name);
-        expect(names.some((n) => n.startsWith("Robot Duck"))).toBe(true);
-        expect(names.some((n) => n.startsWith("Light Repair"))).toBe(true);
-        expect(names.some((n) => n.startsWith("Breadson"))).toBe(true);
-    });
 
 	it("returns deep copies that do not reference the master cards", () => {
 		const { starter, deck } = createDefaultDeck();

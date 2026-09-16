@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGameStore } from "../store";
 import { emitLogin } from "../socket";
+import { useGameStore } from "../store";
 
 export default function Login() {
 	const setUsername = useGameStore((s) => s.setUsername);

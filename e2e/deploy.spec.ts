@@ -8,6 +8,7 @@ import {
 	createGame,
 	handCenter,
 	login,
+	opponentSlotCenter,
 	resetServer,
 	slotCenter,
 	uniqueName,
@@ -98,6 +99,7 @@ async function clickActionRobust(
 	playerName: string,
 	handIndex: number,
 	targetSlot: number,
+	targetsOpponent: boolean,
 ): Promise<void> {
 	for (let attempt = 0; attempt < 5; attempt++) {
 		const hp = await canvasPoint(page, handCenter(handIndex).lx, handCenter(handIndex).ly);
@@ -107,7 +109,8 @@ async function clickActionRobust(
 			selection: number | null;
 		};
 		if (st.selection !== handIndex) continue;
-		const sp = await canvasPoint(page, slotCenter(targetSlot).lx, slotCenter(targetSlot).ly);
+		const target = targetsOpponent ? opponentSlotCenter(targetSlot) : slotCenter(targetSlot);
+		const sp = await canvasPoint(page, target.lx, target.ly);
 		await page.mouse.click(sp.x, sp.y);
 		await page.waitForTimeout(150);
 		const g = watcher.getState();
@@ -340,18 +343,26 @@ test("action cards play, animate, and both players can act again", async ({ brow
 		await waitForPagePhase(s.alice, "action");
 		await waitForPagePhase(s.bob, "action");
 
-		// Both play an action card on their own bot if they have one, else pass.
-		const aSt = await readBotbash(s.alice);
-		const bSt = await readBotbash(s.bob);
-		const aAction = aSt.hand.findIndex((t) => t === "action");
-		const bAction = bSt.hand.findIndex((t) => t === "action");
+		// Stun actions target the opponent; repair and damage target the player's own bot.
+		const aHand = s.watcher.getState()?.players.find((p) => p.name === s.aliceName)?.hand ?? [];
+		const bHand = s.watcher.getState()?.players.find((p) => p.name === s.bobName)?.hand ?? [];
+		const aAction = aHand.findIndex((card) => card.type === "action");
+		const bAction = bHand.findIndex((card) => card.type === "action");
 		if (aAction < 0 && bAction < 0) {
 			await cleanup(s);
 			s = null;
 			continue;
 		}
 		if (aAction >= 0) {
-			await clickActionRobust(s.alice, s.watcher, s.aliceName, aAction, 0);
+			const aTargetsOpponent = aHand[aAction].effect?.kind === "stun";
+			await clickActionRobust(
+				s.alice,
+				s.watcher,
+				s.aliceName,
+				aAction,
+				aTargetsOpponent ? 2 : 0,
+				aTargetsOpponent,
+			);
 		} else {
 			await clickPass(s.alice);
 			await s.watcher.waitFor(
@@ -369,7 +380,15 @@ test("action cards play, animate, and both players can act again", async ({ brow
 			s.aliceName,
 		);
 		if (bAction >= 0) {
-			await clickActionRobust(s.bob, s.watcher, s.bobName, bAction, 2);
+			const bTargetsOpponent = bHand[bAction].effect?.kind === "stun";
+			await clickActionRobust(
+				s.bob,
+				s.watcher,
+				s.bobName,
+				bAction,
+				bTargetsOpponent ? 0 : 2,
+				bTargetsOpponent,
+			);
 		} else {
 			await clickPass(s.bob);
 			await s.watcher.waitFor(

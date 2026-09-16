@@ -127,8 +127,10 @@ export function validateSubmission(
 	if (!card) return "no card at that index";
 	if (!isAction(card)) return "must play a non-bot card";
 	if (!card.effect) return "card has no effect";
-	const boardOwner = game.players.find((p) => p.name === choice.board);
+		const boardOwner = game.players.find((p) => p.name === choice.board);
 	if (!boardOwner) return "bad target board";
+	if (card.effect.kind === "stun" && boardOwner === player)
+		return "must target an enemy bot";
 	if (choice.slot < 0 || choice.slot > 2) return "bad slot";
 	if (!boardOwner.board[choice.slot]) return "no bot to target";
 	return null;
@@ -175,6 +177,13 @@ function applyEffect(
 	if (effect.kind === "damage") {
 		bot.hp.current = Math.max(0, bot.hp.current - effect.amount);
 	}
+	if (effect.kind === "stun") {
+		bot.status.push({
+			kind: "temporary",
+			name: "stunned",
+			turnsRemaining: 1,
+		});
+	}
 }
 
 /** Applies each player's action: play a non-bot card, discard it, apply its effect. */
@@ -211,17 +220,49 @@ export function resolveCombat(game: Game): "over" | "continue" {
 		for (let i = 0; i < 3; i++) {
 			const bot = player.board[i];
 			if (!bot) continue;
-            if (bot.name.includes("Breadson")) {
-                const target1 = opp.board[0];
-                const target2 = opp.board[2];
-                if (target1) target1.hp.current = Math.max(0, target1.hp.current - bot.atk);
-                if (target2) target2.hp.current = Math.max(0, target2.hp.current - bot.atk);
-            } else {
-                let targetSlot = 2 - i;
-                if (!opp.board[targetSlot]) targetSlot = 1;
-                const target = opp.board[targetSlot];
-                if (target) target.hp.current = Math.max(0, target.hp.current - bot.atk);
-            }
+
+			const isStunned = bot.status.some(
+				(status) =>
+					status.kind === "temporary" &&
+					status.name === "stunned" &&
+					status.turnsRemaining > 0,
+			);
+			if (isStunned) continue;
+			
+			if (bot.name.includes("Breadson")) {
+				const target1 = opp.board[0];
+				const target2 = opp.board[2];
+				if (target1)
+					target1.hp.current = Math.max(0, target1.hp.current - bot.atk);
+				if (target2)
+					target2.hp.current = Math.max(0, target2.hp.current - bot.atk);
+			} else {
+				let targetSlot = 2 - i;
+				if (!opp.board[targetSlot]) targetSlot = 1;
+				const target = opp.board[targetSlot];
+				if (target)
+					target.hp.current = Math.max(0, target.hp.current - bot.atk);
+			}
+		}
+	}
+
+	for (const player of [a, b]) {
+		for (const bot of player.board) {
+			if (!bot) continue;
+
+			bot.status = bot.status
+				.map((status) =>
+					status.kind === "temporary"
+						? {
+								...status,
+								turnsRemaining: status.turnsRemaining - 1,
+							}
+						: status,
+				)
+				.filter(
+					(status) =>
+						status.kind === "permanent" || status.turnsRemaining > 0,
+				);
 		}
 	}
 
@@ -245,7 +286,13 @@ export function resolveCombat(game: Game): "over" | "continue" {
 			}
 		}
 	}
-
+	for (const player of [a, b]) {
+		for (const bot of player.board) {
+			if (bot?.name.startsWith("MMM-Sahur")) {
+				bot.atk += 1;
+			}
+		}
+	}
 	const aBots = a.board.filter(Boolean).length;
 	const bBots = b.board.filter(Boolean).length;
 	if (aBots === 0 && bBots === 0) {

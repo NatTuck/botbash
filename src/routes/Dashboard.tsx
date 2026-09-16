@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useGameStore } from "../store";
 import {
 	emitCreateGame,
 	emitDeleteGame,
@@ -8,6 +7,7 @@ import {
 	emitLeaveGame,
 	requestGames,
 } from "../socket";
+import { useGameStore } from "../store";
 
 export default function Dashboard() {
 	const username = useGameStore((s) => s.username);
