@@ -12,7 +12,8 @@
     "test:e2e:install": "playwright install chromium",
     "lint": "biome lint && node scripts/max-lines.mjs",
     "check": "pnpm lint && pnpm test && pnpm build",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "start": "vite-node server/index.ts"
   },
   "dependencies": {
     "@fontsource/orbitron": "^5.3.0",
